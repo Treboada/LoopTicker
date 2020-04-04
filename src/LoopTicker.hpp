@@ -1,3 +1,13 @@
+/** LoopTicker.hpp
+ *
+ * LoopTicker class.
+ *
+ * @version 1.0.0
+ * @author Rafa Couto <caligari@treboada.net>
+ * @license GNU General Public License v3.0
+ * @see https://github.com/Treboada/LoopTicker
+ *
+ */
 
 #ifndef _LOOP_TICKER_HPP
 #define _LOOP_TICKER_HPP

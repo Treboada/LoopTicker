@@ -1,0 +1,22 @@
+{
+	"name": "LoopTicker",
+	"version": "1.0.0",
+	"keywords": "library, C, C++, scheduler, loop, arduino",
+	"description": "A simplistic C++ class for embedded systems to manage tasks on the main loop.",
+	"license": "GPL-3.0",
+	"homepage": "https://github.com/Treboada/LoopTicker",
+	"frameworks": "arduino",
+	"platforms": [ "atmelavr", "espressif8266", "espressif32" ],
+	"examples": "examples/*/*.cpp",
+	"repository": 
+		{
+			"type": "git",
+			"url": "https://github.com/Treboada/LoopTicker.git"
+		},
+	"authors": 
+		{
+			"name": "Rafa Couto",
+			"email": "caligari@treboada..net",
+			"url": "http://www.linkedin.com/in/rafacouto"
+		}
+}

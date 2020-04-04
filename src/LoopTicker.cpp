@@ -1,3 +1,13 @@
+/** LoopTicker.cpp
+ *
+ * LoopTicker class.
+ *
+ * @version 1.0.0
+ * @author Rafa Couto <caligari@treboada.net>
+ * @license GNU General Public License v3.0
+ * @see https://github.com/Treboada/LoopTicker
+ *
+ */
 
 #include "LoopTicker.hpp"
 
