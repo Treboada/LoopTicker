@@ -4,7 +4,7 @@
  * @brief 3 Asynchronous tasks scheduled by LoopTicker
  * @version 0.1
  * @date 2020-04-05
- * 
+ *
  */
 
 #include <Arduino.h>
@@ -25,9 +25,9 @@ void led2_blink(const void* object_ptr, LoopTicker* loop_ticker);
 #define LOOP_TASKS 3
 static const LoopTicker::TaskEntryPoint tasks[LOOP_TASKS] =
 {
-    { function: btn_scan, object_ptr: nullptr },
-    { function: led1_blink, object_ptr: nullptr },
-    { function: led2_blink, object_ptr: nullptr },
+    { .function = btn_scan,   .object_ptr = nullptr },
+    { .function = led1_blink, .object_ptr = nullptr },
+    { .function = led2_blink, .object_ptr = nullptr },
 };
 
 
@@ -40,9 +40,6 @@ void setup()
     pinMode(BTN_PIN, INPUT_PULLUP);
     pinMode(LED1_PIN, OUTPUT);
     pinMode(LED2_PIN, OUTPUT);
-    
-    pinMode(4, OUTPUT);
-    digitalWrite(4, LOW);
 }
 
 
@@ -63,8 +60,9 @@ void btn_scan(const void* object_ptr, LoopTicker* loop_ticker)
     if (now >= _next_scan)
     {
         // task load: it must be as short as possible
-        if (btn_status ^ !digitalRead(BTN_PIN)) 
+        if (btn_status ^ !digitalRead(BTN_PIN))
         {
+            // update button status
             btn_status = !btn_status;
         }
 
@@ -81,7 +79,7 @@ void led1_blink(const void* object_ptr, LoopTicker* loop_ticker)
     if (now >= _next_toggle)
     {
         // blink while button is not pressed
-        if (!btn_status) 
+        if (!btn_status)
         {
             digitalWrite(LED1_PIN, !digitalRead(LED1_PIN));
         }
