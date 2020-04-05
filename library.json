@@ -1,6 +1,6 @@
 {
 	"name": "LoopTicker",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"keywords": "library, C, C++, scheduler, loop, arduino",
 	"description": "A simplistic C++ class for embedded systems to manage tasks on the main loop.",
 	"license": "GPL-3.0",

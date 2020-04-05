@@ -34,3 +34,8 @@
 # platformio
 .pioenvs
 .piolibdeps
+.pio
+
+# VScode
+.vscode
+

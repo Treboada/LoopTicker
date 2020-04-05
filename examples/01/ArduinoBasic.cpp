@@ -1,23 +1,33 @@
+/**
+ * @file ArduinoBasic.cpp
+ * @author Rafa Couto (caligari@treboada.net)
+ * @brief 3 Asynchronous tasks scheduled by LoopTicker
+ * @version 0.1
+ * @date 2020-04-05
+ * 
+ */
 
 #include <Arduino.h>
-
 #include <LoopTicker.hpp>
+
+#define BTN_PIN 3
+#define LED1_PIN 13
+#define LED2_PIN 12
 
 
 // forward declaration for your tasks (implemented below)
-void my_task_1(void* data, LoopTicker* loop_ticker);
-void my_task_2(void* data, LoopTicker* loop_ticker);
-void my_task_3(void* data, LoopTicker* loop_ticker);
+void btn_scan(const void* object_ptr, LoopTicker* loop_ticker);
+void led1_blink(const void* object_ptr, LoopTicker* loop_ticker);
+void led2_blink(const void* object_ptr, LoopTicker* loop_ticker);
 
 
 // tasks to execute in loop
 #define LOOP_TASKS 3
-static LoopTicker::TaskEntryPoint tasks[LOOP_TASKS] =
+static const LoopTicker::TaskEntryPoint tasks[LOOP_TASKS] =
 {
-    // function (loop-ticker method) and data (pointer passed as function param)
-    { function: my_task_1, data: "in task 1" },
-    { function: my_task_2, data: "in task 2" },
-    { function: my_task_3, data: "in task 3" },
+    { function: btn_scan, object_ptr: nullptr },
+    { function: led1_blink, object_ptr: nullptr },
+    { function: led2_blink, object_ptr: nullptr },
 };
 
 
@@ -27,7 +37,12 @@ static LoopTicker task_ticker(tasks, LOOP_TASKS);
 
 void setup()
 {
-    Serial.begin(9600);
+    pinMode(BTN_PIN, INPUT_PULLUP);
+    pinMode(LED1_PIN, OUTPUT);
+    pinMode(LED2_PIN, OUTPUT);
+    
+    pinMode(4, OUTPUT);
+    digitalWrite(4, LOW);
 }
 
 
@@ -38,58 +53,55 @@ void loop()
 }
 
 
-void print_msg(const char* msg, uint32_t now)
+static bool btn_status = false;
+
+void btn_scan(const void* object_ptr, LoopTicker* loop_ticker)
 {
-        Serial.print(msg);
-        Serial.print(" - ");
-        Serial.println(now);
-}
-
-
-void my_task_1(void* data, LoopTicker* loop_ticker)
-{
-    // important: this variable must be static
-    static int32_t _task_1_next_update = 0;
-
     // time to do something?
+    static int32_t _next_scan = 0;
     int32_t now = loop_ticker->getLoopMs32();
-    if (now >= _task_1_next_update)
+    if (now >= _next_scan)
     {
-        // data is a pointer to any structure containing state
-        const char* msg = (const char*) data;
-
         // task load: it must be as short as possible
-        print_msg(msg, now);
+        if (btn_status ^ !digitalRead(BTN_PIN)) 
+        {
+            btn_status = !btn_status;
+        }
 
-        // next time to do something (in 1 second)
-        _task_1_next_update = now + 1000;
+        // next scan in 20 milliseconds (soft debouncing)
+        _next_scan = now + 20;
     }
 }
 
 
-void my_task_2(void* data, LoopTicker* loop_ticker)
+void led1_blink(const void* object_ptr, LoopTicker* loop_ticker)
 {
-    static int32_t _task_2_next_update = 0;
-    int32_t now = loop_ticker->getLoopMs32();
-    if (now >= _task_2_next_update)
+    static uint32_t _next_toggle = 0;
+    uint32_t now = loop_ticker->getLoopMs32();
+    if (now >= _next_toggle)
     {
-        const char* msg = (const char*) data;
-        print_msg(msg, now);
-        _task_2_next_update = now + 2000;
+        // blink while button is not pressed
+        if (!btn_status) 
+        {
+            digitalWrite(LED1_PIN, !digitalRead(LED1_PIN));
+        }
+
+        // 5 Hz
+        _next_toggle = now + 200;
     }
 }
 
 
-void my_task_3(void* data, LoopTicker* loop_ticker)
+void led2_blink(const void* object_ptr, LoopTicker* loop_ticker)
 {
-    static int32_t _task_3_next_update = 0;
-    int32_t now = loop_ticker->getLoopMs32();
-    if (now >= _task_3_next_update)
+    static uint32_t _next_toggle = 0;
+    uint32_t now = loop_ticker->getLoopMs32();
+    if (now >= _next_toggle)
     {
-        const char* msg = (const char*) data;
-        print_msg(msg, now);
-        _task_3_next_update = now + 3000;
+        // blink always
+        digitalWrite(LED2_PIN, !digitalRead(LED2_PIN));
+
+        // 1 Hz
+        _next_toggle = now + 1000;
     }
 }
-
-
