@@ -2,7 +2,7 @@
 	"name": "LoopTicker",
 	"version": "1.0.1",
 	"keywords": "library, C, C++, scheduler, loop, arduino",
-	"description": "A simplistic C++ class for embedded systems to manage tasks on the main loop.",
+	"description": "A simplistic C++ class for embedded systems to manage tasks on the main loop. Further info: https://github.com/Treboada/LoopTicker/blob/master/README.md",
 	"license": "GPL-3.0",
 	"homepage": "https://github.com/Treboada/LoopTicker",
 	"frameworks": "arduino",
