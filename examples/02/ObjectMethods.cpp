@@ -9,18 +9,18 @@ LedBlinker led3(13, 4000); // pin 13, blink interval is 4 seconds
 
 
 // tasks to execute in loop
-#define LOOP_TASKS 3
-static LoopTicker::TaskEntryPoint tasks[LOOP_TASKS] =
+static LoopTicker::Task tasks[] =
 {
     // see LedBlinker class
-    { .function = LedBlinker::loopTickerUpdate, .object_ptr = &led1 },
-    { .function = LedBlinker::loopTickerUpdate, .object_ptr = &led2 },
-    { .function = LedBlinker::loopTickerUpdate, .object_ptr = &led3 },
+    LoopTicker::Task(&led1, LedBlinker::loopTickerUpdate),
+    LoopTicker::Task(&led2, LedBlinker::loopTickerUpdate),
+    LoopTicker::Task(&led3, LedBlinker::loopTickerUpdate),
 };
+#define LOOP_TASKS_COUNTER (sizeof(tasks)/sizeof(tasks[0]))
 
 
 // LoopTicker scheduler
-static LoopTicker task_ticker(tasks, LOOP_TASKS);
+static LoopTicker task_ticker(tasks, LOOP_TASKS_COUNTER);
 
 
 void setup()

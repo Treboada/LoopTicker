@@ -2,8 +2,7 @@
  * @file ArduinoBasic.cpp
  * @author Rafa Couto (caligari@treboada.net)
  * @brief 3 Asynchronous tasks scheduled by LoopTicker
- * @version 0.1
- * @date 2020-04-05
+ * @version 0.2
  *
  */
 
@@ -16,23 +15,23 @@
 
 
 // forward declaration for your tasks (implemented below)
-void btn_scan(const void* object_ptr, LoopTicker* loop_ticker);
-void led1_blink(const void* object_ptr, LoopTicker* loop_ticker);
-void led2_blink(const void* object_ptr, LoopTicker* loop_ticker);
+void btn_scan(LoopTicker* loop_ticker);
+void led1_blink(LoopTicker* loop_ticker);
+void led2_blink(LoopTicker* loop_ticker);
 
 
 // tasks to execute in loop
-#define LOOP_TASKS 3
-static const LoopTicker::TaskEntryPoint tasks[LOOP_TASKS] =
+static const LoopTicker::Task tasks[] =
 {
-    { .function = btn_scan,   .object_ptr = nullptr },
-    { .function = led1_blink, .object_ptr = nullptr },
-    { .function = led2_blink, .object_ptr = nullptr },
+    LoopTicker::Task(btn_scan),
+    LoopTicker::Task(led1_blink),
+    LoopTicker::Task(led2_blink),
 };
+#define LOOP_TASKS_COUNTER (sizeof(tasks)/sizeof(tasks[0]))
 
 
 // LoopTicker scheduler
-static LoopTicker task_ticker(tasks, LOOP_TASKS);
+static LoopTicker task_ticker(tasks, LOOP_TASKS_COUNTER);
 
 
 void setup()
@@ -52,7 +51,7 @@ void loop()
 
 static bool btn_status = false;
 
-void btn_scan(const void* object_ptr, LoopTicker* loop_ticker)
+void btn_scan(LoopTicker* loop_ticker)
 {
     // time to do something?
     static int32_t _next_scan = 0;
@@ -72,7 +71,7 @@ void btn_scan(const void* object_ptr, LoopTicker* loop_ticker)
 }
 
 
-void led1_blink(const void* object_ptr, LoopTicker* loop_ticker)
+void led1_blink(LoopTicker* loop_ticker)
 {
     static uint32_t _next_toggle = 0;
     uint32_t now = loop_ticker->getLoopMs32();
@@ -90,7 +89,7 @@ void led1_blink(const void* object_ptr, LoopTicker* loop_ticker)
 }
 
 
-void led2_blink(const void* object_ptr, LoopTicker* loop_ticker)
+void led2_blink(LoopTicker* loop_ticker)
 {
     static uint32_t _next_toggle = 0;
     uint32_t now = loop_ticker->getLoopMs32();

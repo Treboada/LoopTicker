@@ -2,7 +2,7 @@
  *
  * LoopTicker class.
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rafa Couto <caligari@treboada.net>
  * @license GNU General Public License v3.0
  * @see https://github.com/Treboada/LoopTicker
@@ -24,17 +24,43 @@ class LoopTicker
         /**
          * @brief Define a task entry-point to manage by LoopTicker.
          */
-        struct TaskEntryPoint
+        class Task
         {
-            /**
-             * @brief Function to be called by the LoopTicker.
-             */
-            void (*function)(const void* object_ptr, LoopTicker* loop_ticker);
+            public:
 
-            /**
-             * @brief Pointer to object instance when function is a instance method.
-             */
-            void* object_ptr;
+                typedef void (*handler)(const void* object_ptr, LoopTicker* loop_ticker);
+                typedef void (*callback)(LoopTicker* loop_ticker);
+
+                Task(callback function) 
+                {
+                    function_ptr = (void*)function;
+                    object_ptr = (void*)nullptr;
+                }
+
+                Task(const void* instance, handler class_method) 
+                {
+                    function_ptr = (void*)class_method;
+                    object_ptr = (void*)instance;
+                }
+
+            private: 
+
+                friend LoopTicker;
+
+                /**
+                 * @brief Private constructor to avoid default constructor.
+                 */
+                Task() {}
+
+                /**
+                 * @brief Function to be called by the LoopTicker.
+                 */
+                void (*function_ptr);
+
+                /**
+                 * @brief Pointer to object instance when function is a instance method.
+                 */
+                const void* object_ptr;
         };
 
         /**
@@ -43,7 +69,7 @@ class LoopTicker
          * @param task_entry_points  Array with the task entry-points to call in the loop.
          * @param size  Length ot the array with the task entry-points.
          */
-        LoopTicker(const TaskEntryPoint task_entry_points[], uint8_t size);
+        LoopTicker(const Task tasks[], uint8_t size);
 
         /**
          * @brief Receive the program control to execute the tasks, once in a loop.
@@ -67,7 +93,7 @@ class LoopTicker
         uint32_t _loopMsHigh;
         uint32_t _loopMsLow;
 
-        const TaskEntryPoint* _tasksList;
+        const Task* _tasksList;
         uint8_t _tasksCount;
 
         void _updateLoopMillis();

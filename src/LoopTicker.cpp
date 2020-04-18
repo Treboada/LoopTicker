@@ -2,7 +2,7 @@
  *
  * LoopTicker class.
  *
- * @version 1.0.1
+ * @version 1.1.0
  * @author Rafa Couto <caligari@treboada.net>
  * @license GNU General Public License v3.0
  * @see https://github.com/Treboada/LoopTicker
@@ -33,7 +33,7 @@ void LoopTicker::_updateLoopMillis()
 }
 
 
-LoopTicker::LoopTicker(const TaskEntryPoint tasks[], uint8_t size)
+LoopTicker::LoopTicker(const Task tasks[], uint8_t size)
 {
     _tasksList = tasks;
     _tasksCount = size;
@@ -50,8 +50,18 @@ void LoopTicker::doLoop()
     // execute each task entrypoint
     for (uint8_t t = 0; t < _tasksCount; t++)
     {
-        void* instance = _tasksList[t].object_ptr;
-        (_tasksList[t].function)(instance, this);
+        const void* instance = _tasksList[t].object_ptr;
+        if (instance == nullptr)
+        {
+            Task::callback cb = (Task::callback)(_tasksList[t].function_ptr);
+            cb(this);
+        }
+        else
+        {
+            Task::handler hl = (Task::handler)(_tasksList[t].function_ptr);
+            hl(instance, this);
+        }
+        
     }
 }
 

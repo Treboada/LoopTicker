@@ -11,24 +11,24 @@ __LoopTicker__ provides a helper to manage asynchronous tasks in a simple way (n
 
 ## Summary
 
-```
+``` C++
 #include <LoopTicker.hpp>
 
 // declare forwarding functions here and implement them where you want:
-void btn_scan(const void* object_ptr, LoopTicker* loop_ticker);
+void btn_scan(LoopTicker* loop_ticker);
 void LedBlinker::loopUpdate(const void* object_ptr, LoopTicker* loop_ticker);
 
 // put the tasks to execute in this array
-#define LOOP_TASKS 3
-static const LoopTicker::TaskEntryPoint tasks[LOOP_TASKS] =
+static const LoopTicker::Task tasks[] =
 {
-    { .function = btn_scan,  .object_ptr = nullptr },  // simple function call
-    { .function = led_blink, .object_ptr = &led1 },    // class method
-    { .function = led_blink, .object_ptr = &led2 },    // class method
+    Task(btn_scan),             // simple callback function
+    Task(&led1, led_blink),     // instance and class method
+    Task(&led2, led_blink),     // instance and class method
 };
+#define LOOP_TASKS_COUNTER (sizeof(tasks)/sizeof(tasks[0]))
 
 // instance a LoopTicker scheduler
-static LoopTicker task_ticker(tasks, LOOP_TASKS);
+static LoopTicker task_ticker(tasks, LOOP_TASKS_COUNTER);
 
 void setup()
 {
@@ -44,13 +44,13 @@ void loop()
 ## Examples
 
 1. [ArduinoBasic](examples/01) 3 Asynchronous tasks scheduled by LoopTicker.
-2. [ObjectMethods](examples/02) Usage of *object_ptr* to refer to object instances.
+2. [ObjectMethods](examples/02) Usage of object instances instead function callbacks. 
 
 ## Simulating the setup-loop pattern
 
 On non-arduino frameworks, you can simulate the setup-loop pattern in this way:
 
-```
+``` C++
 #ifndef ARDUINO
 int main(void)
 {
@@ -62,8 +62,9 @@ int main(void)
 
 ## Roadmap
 
-- Task sleeping (non-blocking delay)
-- Profiling
+- C++ templates to avoid static class methods.
+- Task sleeping (non-blocking lazy delay).
+- Profiling tools.
 
 ## Change log
 
@@ -76,4 +77,7 @@ int main(void)
 - Code documentation and README.
 - Example with object methods (example 02)
 
+### v1.1.0
 
+- Task constructors.
+- No need to declare function parameters if not used.
