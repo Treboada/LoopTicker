@@ -13,16 +13,24 @@
 
 #ifdef ARDUINO
 #   include <Arduino.h>
+#elif defined(linux)
+#   include <sys/time.h>
 #endif
 
 
 void LoopTicker::_updateLoopMillis()
 {
+    uint32_t millis32 = 0;
+
 #   ifdef ARDUINO
 
-    uint32_t millis32 = millis();
-    if (millis32 < _loopMsLow) _loopMsHigh++;
-    _loopMsLow = millis32;
+    millis32 = millis();
+
+#   elif defined(linux)
+
+    timeval tv;
+    gettimeofday(&tv, 0);
+    millis32 = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 
 #   else
 
@@ -30,6 +38,10 @@ void LoopTicker::_updateLoopMillis()
 #   error "LoopTicker::_updateLoopMillis() not implemented"
 
 #   endif
+
+    // manage 32 bits overflow
+    if (millis32 < _loopMsLow) _loopMsHigh++;
+    _loopMsLow = millis32;
 }
 
 
@@ -61,7 +73,7 @@ void LoopTicker::doLoop()
             Task::handler hl = (Task::handler)(_tasksList[t].function_ptr);
             hl(instance, this);
         }
-        
+
     }
 }
 
