@@ -81,3 +81,8 @@ int main(void)
 
 - Task constructors.
 - No need to declare function parameters if not used.
+
+### v1.2.0
+
+- Usage of POSIX time for Linux environments.
+
